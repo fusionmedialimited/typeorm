@@ -242,6 +242,14 @@ export class InsertQueryBuilder<Entity> extends QueryBuilder<Entity> {
     }
 
     /**
+     * Adds additional ON DUPLICATE statement supported in MySQL.
+     */
+    onDuplicate(statement: string): this {
+        this.expressionMap.onDuplicate = statement;
+        return this;
+    };
+
+    /**
      * Adds additional ignore statement supported in databases.
      */
     orIgnore(statement: string | boolean = true): this {
@@ -327,6 +335,9 @@ export class InsertQueryBuilder<Entity> extends QueryBuilder<Entity> {
               const { overwrite, columns } = this.expressionMap.onUpdate;
               query += `${columns ? " ON DUPLICATE KEY UPDATE " + columns : ""}`;
               query += `${overwrite ? " ON DUPLICATE KEY UPDATE " + overwrite : ""}`;
+            }
+            if(this.expressionMap.onDuplicate) {
+                query += " ON DUPLICATE KEY UPDATE " + this.expressionMap.onDuplicate;
             }
         }
 
